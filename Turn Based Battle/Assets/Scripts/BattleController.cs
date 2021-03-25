@@ -436,6 +436,7 @@ public class BattleController : MonoBehaviour
                 if (level == PSC.ps.maxLevelReached)
                 {
                     PSC.ps.maxLevelReached++;
+                    PSC.ps.AddSkillPoints();
                 }
 
                 // Unlock standard skill (total count = 8)
@@ -461,7 +462,6 @@ public class BattleController : MonoBehaviour
                     yield return new WaitForSeconds(2);
                 }
 
-                PSC.ps.AddSkillPoints();
                 PSC.ps.level++;
                 PSC.ps.LoadLobby();
             }

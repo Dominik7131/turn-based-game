@@ -11,7 +11,7 @@ public class EnemyBase : CharacterBase
         maxHP = PlayerStatsController.ps.level * 4;
         currentHP = maxHP;
         damage = (PlayerStatsController.ps.level * 2) - 1;
-        slideSpeed = 5;
+        slideSpeed = 6;
 
         base.Start();
     }

@@ -4,6 +4,7 @@
 public class ShopController : MonoBehaviour
 {
     [SerializeField] private GameObject textPrefab;
+    [SerializeField] private GameObject title;
     [SerializeField] private TextMesh xp;
     [SerializeField] private TextMesh skillPoints;
     [SerializeField] private GameObject shopButtons;
@@ -73,9 +74,9 @@ public class ShopController : MonoBehaviour
     3: 15%, length: 4, cooldown: 8
     4: 20%, length: 4, cooldown: 8
     5: 20%, length: 5, cooldown: 7 */
-    public static readonly int[] poisonEffect = { 10, 10, 15, 15, 20, 20 };
-    public static readonly int[] poisonLength = { 2, 3, 3, 4, 4, 5 };
-    public static readonly int[] poisonCooldown = { 10, 9, 9, 8, 8, 7 };
+    public static readonly int[] poisonEffect = { 25, 30, 35, 40, 45, 50 };
+    public static readonly int[] poisonLength = { 3, 3, 3, 4, 4, 4 };
+    public static readonly int[] poisonCooldown = { 9, 8, 8, 7, 7, 6 };
 
     /* Shield skill:
     0: 30%, length: 2, cooldown: 12
@@ -188,6 +189,7 @@ public class ShopController : MonoBehaviour
 
     public void OnAbilitiesOpenButton()
     {
+        title.SetActive(false);
         abilitiesButton.SetActive(false);
         skillTreeButton.SetActive(false);
         abilitiesTab.SetActive(true);
@@ -199,6 +201,7 @@ public class ShopController : MonoBehaviour
 
     public void OnAbilitiesCloseButton()
     {
+        title.SetActive(true);
         abilitiesButton.SetActive(true);
         skillTreeButton.SetActive(true);
         abilitiesTab.SetActive(false);
@@ -208,6 +211,7 @@ public class ShopController : MonoBehaviour
 
     public void OnSkillTreeOpenButton()
     {
+        title.SetActive(false);
         abilitiesButton.SetActive(false);
         skillTreeButton.SetActive(false);
 
@@ -222,6 +226,7 @@ public class ShopController : MonoBehaviour
 
     public void OnSkillTreeCloseButton()
     {
+        title.SetActive(true);
         abilitiesButton.SetActive(true);
         skillTreeButton.SetActive(true);
         skillTreeTab.SetActive(false);

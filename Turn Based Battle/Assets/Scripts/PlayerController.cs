@@ -21,7 +21,7 @@ public class PlayerController : CharacterBase
         int playerDamage = damage;
         Color attackColor = Color.white;
 
-        int criticalChance = 10 + (criticalHit * 2);
+        int criticalChance = 10 + ((criticalHit - 1) * 2);
         if (Random.Range(1, 100) <= criticalChance)
         {
             // Critical hit
@@ -29,7 +29,7 @@ public class PlayerController : CharacterBase
             Debug.Log("Player damage: " + playerDamage);
             playerDamage = Mathf.RoundToInt(playerDamage * criticalMultiplier);
             Debug.Log("Critical multiplier: " + criticalMultiplier);
-            Debug.Log("Critical damag: " + playerDamage);
+            Debug.Log("Critical damage: " + playerDamage);
             attackColor = Color.red;
             StartCoroutine(cameraShakeController.Shake(0.1f, 0.8f));
         }
