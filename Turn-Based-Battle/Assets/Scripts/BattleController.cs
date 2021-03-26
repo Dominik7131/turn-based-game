@@ -29,7 +29,7 @@ public class BattleController : MonoBehaviour
     private enum BattleState { START, PLAYERTURN, ENEMYTURN }
     private BattleState state;
 
-    private bool isPlayerTurnFinished; // allow player only 1 attack per turn (PLAYERTURN state is for sliding player)
+    private bool isPlayersTurnFinished; // allow player only 1 attack per turn (PLAYERTURN state is for sliding player)
     private bool isSlidingForward;
     private bool isSlidingBack;
     private int enemyCount;
@@ -117,7 +117,7 @@ public class BattleController : MonoBehaviour
         selectedEnemy = 0; // target middle enemy
         activeEnemy = 0; // first enemy to attack
 
-        isPlayerTurnFinished = false;
+        isPlayersTurnFinished = false;
         isSlidingForward = false;
         isSlidingBack = false;
         state = BattleState.PLAYERTURN;
@@ -138,64 +138,64 @@ public class BattleController : MonoBehaviour
     #region SkillButtons
     public void OnAttackButton()
     {
-        if (isPlayerTurnFinished || !PSC.ps.isSkillUnlocked[(int)Skill.Basic]) { return; }
-        isPlayerTurnFinished = true;
+        if (isPlayersTurnFinished || !PSC.ps.isSkillUnlocked[(int)Skill.Basic]) { return; }
+        isPlayersTurnFinished = true;
         StartCoroutine(PlayerAttack(Skill.Basic));
     }
     public void OnHealButton()
     {
-        if (isPlayerTurnFinished || !skillHUDController.IsSkillReady(Skill.Heal)
+        if (isPlayersTurnFinished || !skillHUDController.IsSkillReady(Skill.Heal)
             || !PSC.ps.isSkillUnlocked[(int)Skill.Heal]) { return; }
 
-        isPlayerTurnFinished = true;
+        isPlayersTurnFinished = true;
         skillHUDController.SetCooldown(Skill.Heal, PSC.ps.healRecharge);
         StartCoroutine(PlayerHeal());
     }
     public void OnStunButton()
     {
-        if (isPlayerTurnFinished || !skillHUDController.IsSkillReady(Skill.Stun)
+        if (isPlayersTurnFinished || !skillHUDController.IsSkillReady(Skill.Stun)
             || !PSC.ps.isSkillUnlocked[(int)Skill.Stun]) { return; }
-        isPlayerTurnFinished = true;
+        isPlayersTurnFinished = true;
         skillHUDController.SetCooldown(Skill.Stun, PSC.ps.stunRecharge);
         StartCoroutine(PlayerAttack(Skill.Stun));
     }
     public void OnArealAttackButton()
     {
-        if (isPlayerTurnFinished || !skillHUDController.IsSkillReady(Skill.Areal)
+        if (isPlayersTurnFinished || !skillHUDController.IsSkillReady(Skill.Areal)
             || !PSC.ps.isSkillUnlocked[(int)Skill.Areal]) { return; }
-        isPlayerTurnFinished = true;
+        isPlayersTurnFinished = true;
         skillHUDController.SetCooldown(Skill.Areal, PSC.ps.arealRecharge);
         StartCoroutine(PlayerAttack(Skill.Areal));
     }
     public void OnPoisonButton()
     {
-        if (isPlayerTurnFinished || !skillHUDController.IsSkillReady(Skill.Poison)
+        if (isPlayersTurnFinished || !skillHUDController.IsSkillReady(Skill.Poison)
             || !PSC.ps.isSkillUnlocked[(int)Skill.Poison]) { return; }
-        isPlayerTurnFinished = true;
+        isPlayersTurnFinished = true;
         skillHUDController.SetCooldown(Skill.Poison, PSC.ps.poisonRecharge);
         StartCoroutine(PlayerAttack(Skill.Poison));
     }
     public void OnShieldButton()
     {
-        if (isPlayerTurnFinished || !skillHUDController.IsSkillReady(Skill.Shield)
+        if (isPlayersTurnFinished || !skillHUDController.IsSkillReady(Skill.Shield)
             || !PSC.ps.isSkillUnlocked[(int)Skill.Shield]) { return; }
-        isPlayerTurnFinished = true;
+        isPlayersTurnFinished = true;
         skillHUDController.SetCooldown(Skill.Shield, PSC.ps.shieldRecharge);
         StartCoroutine(PlayerUseShield());
     }
     public void OnBuffButton()
     {
-        if (isPlayerTurnFinished || !skillHUDController.IsSkillReady(Skill.Buff)
+        if (isPlayersTurnFinished || !skillHUDController.IsSkillReady(Skill.Buff)
             || !PSC.ps.isSkillUnlocked[(int)Skill.Buff]) { return; }
-        isPlayerTurnFinished = true;
+        isPlayersTurnFinished = true;
         skillHUDController.SetCooldown(Skill.Buff, PSC.ps.buffRecharge);
         StartCoroutine(PlayerUseBuff());
     }
     public void OnUltimateButton()
     {
-        if (isPlayerTurnFinished || !skillHUDController.IsSkillReady(Skill.Ultimate)
+        if (isPlayersTurnFinished || !skillHUDController.IsSkillReady(Skill.Ultimate)
             || !PSC.ps.isSkillUnlocked[(int)Skill.Ultimate]) { return; }
-        isPlayerTurnFinished = true;
+        isPlayersTurnFinished = true;
         skillHUDController.SetCooldown(Skill.Ultimate, PSC.ps.ultimateRecharge);
         StartCoroutine(PlayerAttack(Skill.Ultimate));
     }
@@ -233,7 +233,7 @@ public class BattleController : MonoBehaviour
         if (Random.Range(1, 100) < PSC.ps.secondTurnChance && !isSecondTurn)
         {
             isSecondTurn = true; // disable second turn chance next round
-            isPlayerTurnFinished = false;
+            isPlayersTurnFinished = false;
             skillHUDController.DecreseCooldowns();
             playerController.DisplaySecondTurn();
         }
@@ -401,7 +401,7 @@ public class BattleController : MonoBehaviour
         }
         else
         {
-            isPlayerTurnFinished = false;
+            isPlayersTurnFinished = false;
             state = BattleState.PLAYERTURN;
         }
     }
@@ -508,7 +508,7 @@ public class BattleController : MonoBehaviour
 
 
         // Enemy target switching
-        if (Input.GetKeyDown(KeyCode.Tab) && !isPlayerTurnFinished && !IsRoundOver())
+        if (Input.GetKeyDown(KeyCode.Tab) && !isPlayersTurnFinished && !IsRoundOver())
         {
             for (int i = 0; i < enemyCount; i++)
             {
