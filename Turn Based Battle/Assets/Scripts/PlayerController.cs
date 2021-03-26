@@ -73,7 +73,6 @@ public class PlayerController : CharacterBase
             }
             else if (skill == Skill.Poison)
             {
-                playerDamage = Mathf.RoundToInt(playerDamage / 2f);
                 enemyStats[selectedEnemy].ApplyPoison(PlayerStatsController.ps.poisonLength);
             }
             enemyStats[selectedEnemy].TakeDamage(playerDamage, attackColor);
