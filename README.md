@@ -1,5 +1,5 @@
 # Full gameplay
-- https://youtu.be/nk_WsSyDzPI
+- https://youtu.be/kbwji-kE0fY
 
 # How to install on Windows
 - clone repository
