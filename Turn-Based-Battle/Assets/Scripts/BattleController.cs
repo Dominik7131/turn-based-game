@@ -336,7 +336,7 @@ public class BattleController : MonoBehaviour
             }
 
             activeEnemy = i;
-            enemyStats[activeEnemy].PlayAttack();
+            enemyStats[i].PlayAttack();
             yield return new WaitForSeconds(0.5f); // Wait for slide attack
 
             enemyStats[i].Attack(playerController);
