@@ -24,7 +24,7 @@ public class BattleController : MonoBehaviour
     private GameObject unlockTextGO;
 
     private readonly Vector3 playerSpawnPosition = new Vector3(-6, -1, 0);
-    private readonly Vector3[] enemySpawnPosition = { new Vector3(6, -1, 0), new Vector3(8, 1.5f, 0), new Vector3(8, -3.5f, 0) };
+    private readonly Vector3[] enemySpawnPosition = { new Vector3(6, -1, 0), new Vector3(7.5f, 1.5f, 0), new Vector3(7.5f, -3.5f, 0) };
 
     private enum BattleState { START, PLAYERTURN, ENEMYTURN }
     private BattleState state;
