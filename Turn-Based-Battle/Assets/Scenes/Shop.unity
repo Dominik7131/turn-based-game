@@ -779,13 +779,12 @@ TextMesh:
   m_GameObject: {fileID: 114168046}
   m_Text: 'Strength = +1 damage
 
-    Vitality = + 10 max HP
+    Vitality = +5 max HP
 
-    Criticals = +2%
-    critical chance & +0.1 critical damage multiplier
+    Criticals = +2% critical
+    chance & +0.1 critical damage multiplier
 
-    Looting = +1 XP for every
-    XP drop'
+    Looting = +1 XP for every XP drop'
   m_OffsetZ: 0
   m_CharacterSize: 0.1
   m_LineSpacing: 1
