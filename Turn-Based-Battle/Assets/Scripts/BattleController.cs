@@ -24,18 +24,16 @@ public class BattleController : MonoBehaviour
     private GameObject unlockTextGO;
 
     private readonly Vector3 playerSpawnPosition = new Vector3(-6, -1, 0);
-    private readonly Vector3[] enemySpawnPosition = { new Vector3(6, -1, 0), new Vector3(7.5f, 1.5f, 0), new Vector3(7.5f, -3.5f, 0) };
+    private readonly Vector3[] enemySpawnPosition = { new Vector3(6, -1, 0), new Vector3(7f, 1.5f, 0), new Vector3(7f, -3.5f, 0) };
 
     private enum BattleState { START, PLAYERTURN, ENEMYTURN }
     private BattleState state;
 
-    private bool isPlayersTurnFinished; // allow player only 1 attack per turn (PLAYERTURN state is for sliding player)
-    private bool isSlidingForward;
-    private bool isSlidingBack;
     private int enemyCount;
     private int selectedEnemy; // player's current target: 0 = middle enemy, 1 = top, 2 = botom
-    private int activeEnemy;
     private bool isSecondTurn;
+    IEnumerator playerSlideBackCoroutine;
+    IEnumerator[] enemySlideBackCoroutine;
 
 
     private void Awake()
@@ -48,7 +46,6 @@ public class BattleController : MonoBehaviour
     void Start()
     {
         currentRound = 0;
-
         SetupLevel();
         SetupPlayer();
         SetupRound();
@@ -115,16 +112,13 @@ public class BattleController : MonoBehaviour
         activeCircle.transform.position = enemySpawnPosition[0];
 
         selectedEnemy = 0; // target middle enemy
-        activeEnemy = 0; // first enemy to attack
 
-        isPlayersTurnFinished = false;
-        isSlidingForward = false;
-        isSlidingBack = false;
         state = BattleState.PLAYERTURN;
     }
 
     void SetupEnemies(GameObject round)
     {
+        enemySlideBackCoroutine = new IEnumerator[enemyCount];
         enemyStats = new EnemyBase[enemyCount];
         for (int i = 0; i < enemyCount; i++)
         {
@@ -138,64 +132,64 @@ public class BattleController : MonoBehaviour
     #region SkillButtons
     public void OnAttackButton()
     {
-        if (isPlayersTurnFinished || !PSC.ps.isSkillUnlocked[(int)Skill.Basic]) { return; }
-        isPlayersTurnFinished = true;
+        if (state != BattleState.PLAYERTURN || !PSC.ps.isSkillUnlocked[(int)Skill.Basic]) { return; }
+
+        state = BattleState.ENEMYTURN;
         StartCoroutine(PlayerAttack(Skill.Basic));
     }
     public void OnHealButton()
     {
-        if (isPlayersTurnFinished || !skillHUDController.IsSkillReady(Skill.Heal)
-            || !PSC.ps.isSkillUnlocked[(int)Skill.Heal]) { return; }
+        if (state != BattleState.PLAYERTURN || !skillHUDController.IsSkillReady(Skill.Heal) || !PSC.ps.isSkillUnlocked[(int)Skill.Heal]) { return; }
 
-        isPlayersTurnFinished = true;
+        state = BattleState.ENEMYTURN;
         skillHUDController.SetCooldown(Skill.Heal, PSC.ps.healRecharge);
         StartCoroutine(PlayerHeal());
     }
     public void OnStunButton()
     {
-        if (isPlayersTurnFinished || !skillHUDController.IsSkillReady(Skill.Stun)
-            || !PSC.ps.isSkillUnlocked[(int)Skill.Stun]) { return; }
-        isPlayersTurnFinished = true;
+        if (state != BattleState.PLAYERTURN || !skillHUDController.IsSkillReady(Skill.Stun) || !PSC.ps.isSkillUnlocked[(int)Skill.Stun]) { return; }
+
+        state = BattleState.ENEMYTURN;
         skillHUDController.SetCooldown(Skill.Stun, PSC.ps.stunRecharge);
         StartCoroutine(PlayerAttack(Skill.Stun));
     }
     public void OnArealAttackButton()
     {
-        if (isPlayersTurnFinished || !skillHUDController.IsSkillReady(Skill.Areal)
-            || !PSC.ps.isSkillUnlocked[(int)Skill.Areal]) { return; }
-        isPlayersTurnFinished = true;
+        if (state != BattleState.PLAYERTURN || !skillHUDController.IsSkillReady(Skill.Areal) || !PSC.ps.isSkillUnlocked[(int)Skill.Areal]) { return; }
+
+        state = BattleState.ENEMYTURN;
         skillHUDController.SetCooldown(Skill.Areal, PSC.ps.arealRecharge);
         StartCoroutine(PlayerAttack(Skill.Areal));
     }
     public void OnPoisonButton()
     {
-        if (isPlayersTurnFinished || !skillHUDController.IsSkillReady(Skill.Poison)
-            || !PSC.ps.isSkillUnlocked[(int)Skill.Poison]) { return; }
-        isPlayersTurnFinished = true;
+        if (state != BattleState.PLAYERTURN || !skillHUDController.IsSkillReady(Skill.Poison) || !PSC.ps.isSkillUnlocked[(int)Skill.Poison]) { return; }
+
+        state = BattleState.ENEMYTURN;
         skillHUDController.SetCooldown(Skill.Poison, PSC.ps.poisonRecharge);
         StartCoroutine(PlayerAttack(Skill.Poison));
     }
     public void OnShieldButton()
     {
-        if (isPlayersTurnFinished || !skillHUDController.IsSkillReady(Skill.Shield)
-            || !PSC.ps.isSkillUnlocked[(int)Skill.Shield]) { return; }
-        isPlayersTurnFinished = true;
+        if (state != BattleState.PLAYERTURN || !skillHUDController.IsSkillReady(Skill.Shield) || !PSC.ps.isSkillUnlocked[(int)Skill.Shield]) { return; }
+
+        state = BattleState.ENEMYTURN;
         skillHUDController.SetCooldown(Skill.Shield, PSC.ps.shieldRecharge);
         StartCoroutine(PlayerUseShield());
     }
     public void OnBuffButton()
     {
-        if (isPlayersTurnFinished || !skillHUDController.IsSkillReady(Skill.Buff)
-            || !PSC.ps.isSkillUnlocked[(int)Skill.Buff]) { return; }
-        isPlayersTurnFinished = true;
+        if (state != BattleState.PLAYERTURN || !skillHUDController.IsSkillReady(Skill.Buff) || !PSC.ps.isSkillUnlocked[(int)Skill.Buff]) { return; }
+
+        state = BattleState.ENEMYTURN;
         skillHUDController.SetCooldown(Skill.Buff, PSC.ps.buffRecharge);
         StartCoroutine(PlayerUseBuff());
     }
     public void OnUltimateButton()
     {
-        if (isPlayersTurnFinished || !skillHUDController.IsSkillReady(Skill.Ultimate)
-            || !PSC.ps.isSkillUnlocked[(int)Skill.Ultimate]) { return; }
-        isPlayersTurnFinished = true;
+        if (state != BattleState.PLAYERTURN || !skillHUDController.IsSkillReady(Skill.Ultimate) || !PSC.ps.isSkillUnlocked[(int)Skill.Ultimate]) { return; }
+
+        state = BattleState.ENEMYTURN;
         skillHUDController.SetCooldown(Skill.Ultimate, PSC.ps.ultimateRecharge);
         StartCoroutine(PlayerAttack(Skill.Ultimate));
     }
@@ -204,15 +198,21 @@ public class BattleController : MonoBehaviour
 
     IEnumerator PlayerAttack(Skill skill)
     {
-        isSlidingForward = true;
+        if (playerSlideBackCoroutine != null) // stop sliding back if still executing
+        {
+            StopCoroutine(playerSlideBackCoroutine);
+        }
+        StartCoroutine(playerController.MoveTo(enemySpawnPosition[selectedEnemy], 1.5f));
         playerController.PlayAttack();
         yield return new WaitForSeconds(0.5f); // Wait for slide attack
 
         playerController.Attack(enemyStats, selectedEnemy, skill, cameraShakeController);
 
-        isSlidingForward = false;
-        isSlidingBack = true;
-        yield return new WaitForSeconds(0.75f); // Wait for slide back
+        playerSlideBackCoroutine = playerController.MoveTo(playerSpawnPosition, 0.01f);
+        StartCoroutine(playerSlideBackCoroutine);
+
+
+        yield return new WaitForSeconds(0.5f); // Wait for slide back
 
         if (IsAnyEnemyDead())
         {
@@ -227,20 +227,18 @@ public class BattleController : MonoBehaviour
             }
         }
 
-        isSlidingBack = false;
 
         // Second turn chance - can happen only once per player's turn
         if (Random.Range(1, 100) < PSC.ps.secondTurnChance && !isSecondTurn)
         {
             isSecondTurn = true; // disable second turn chance next round
-            isPlayersTurnFinished = false;
             skillHUDController.DecreseCooldowns();
             playerController.DisplaySecondTurn();
+            state = BattleState.PLAYERTURN;
         }
         else
         {
             isSecondTurn = false;
-            state = BattleState.ENEMYTURN;
             StartCoroutine(EnemyTurn());
         }
     }
@@ -250,7 +248,6 @@ public class BattleController : MonoBehaviour
         playerController.HealPercentage();
         yield return new WaitForSeconds(0.5f);
 
-        state = BattleState.ENEMYTURN;
         StartCoroutine(EnemyTurn());
     }
 
@@ -259,7 +256,6 @@ public class BattleController : MonoBehaviour
         playerController.ApplyShield(PSC.ps.shieldLength);
         yield return new WaitForSeconds(0.5f);
 
-        state = BattleState.ENEMYTURN;
         StartCoroutine(EnemyTurn());
     }
 
@@ -268,7 +264,6 @@ public class BattleController : MonoBehaviour
         playerController.ApplyBuff(PSC.ps.buffLength);
         yield return new WaitForSeconds(0.5f);
 
-        state = BattleState.ENEMYTURN;
         StartCoroutine(EnemyTurn());
     }
 
@@ -335,7 +330,11 @@ public class BattleController : MonoBehaviour
                 continue;
             }
 
-            activeEnemy = i;
+            if (enemySlideBackCoroutine[i] != null) // stop sliding back if still executing
+            {
+                StopCoroutine(enemySlideBackCoroutine[i]);
+            }
+            StartCoroutine(enemyStats[i].MoveTo(playerSpawnPosition, 1.5f));
             enemyStats[i].PlayAttack();
             yield return new WaitForSeconds(0.5f); // Wait for slide attack
 
@@ -350,8 +349,9 @@ public class BattleController : MonoBehaviour
                 }
             }
 
-            isSlidingBack = true;
-            yield return new WaitForSeconds(1); // Wait for slide back
+            enemySlideBackCoroutine[i] = enemyStats[i].MoveTo(enemySpawnPosition[i], 0.01f);
+            StartCoroutine(enemySlideBackCoroutine[i]);
+            yield return new WaitForSeconds(0.5f); // Wait for slide back
 
             if (playerController.IsDead())
             {
@@ -364,6 +364,11 @@ public class BattleController : MonoBehaviour
             // Check death by thorns
             if (enemyStats[i].IsDead())
             {
+                if (enemySlideBackCoroutine[i] != null) // stop sliding back if still executing
+                {
+                    StopCoroutine(enemySlideBackCoroutine[i]);
+                }
+
                 enemyStats[i].Die();
                 enemyStats[i].isDestroyed = true;
 
@@ -377,8 +382,6 @@ public class BattleController : MonoBehaviour
                     TargetAnotherEnemy();
                 }
             }
-
-            isSlidingBack = false;
         }
 
         skillHUDController.DecreseCooldowns();
@@ -401,7 +404,6 @@ public class BattleController : MonoBehaviour
         }
         else
         {
-            isPlayersTurnFinished = false;
             state = BattleState.PLAYERTURN;
         }
     }
@@ -480,22 +482,9 @@ public class BattleController : MonoBehaviour
         return true;
     }
 
+
     void Update()
     {
-        /* Debug
-        if (Input.GetMouseButton(1)) // instant kill
-        {
-            foreach (EnemyBase eb in enemyStats)
-            {
-                eb.TakeDamage(100000, Color.red);
-            }
-        }
-        if (Input.GetMouseButton(3)) // instant suicide
-        {
-            playerController.TakeDamage(100000, Color.red);
-        }*/
-
-
         // Skills shortcuts
         if (Input.GetKeyDown(KeyCode.Q)) { OnAttackButton(); }
         if (Input.GetKeyDown(KeyCode.W)) { OnHealButton(); }
@@ -508,7 +497,7 @@ public class BattleController : MonoBehaviour
 
 
         // Enemy target switching
-        if (Input.GetKeyDown(KeyCode.Tab) && !isPlayersTurnFinished && !IsRoundOver())
+        if (Input.GetKeyDown(KeyCode.Tab) && state == BattleState.PLAYERTURN && !IsRoundOver())
         {
             for (int i = 0; i < enemyCount; i++)
             {
@@ -519,30 +508,6 @@ public class BattleController : MonoBehaviour
                 }
             }
             activeCircle.transform.position = enemySpawnPosition[selectedEnemy];
-        }
-
-        // Sliding logic for all characters
-        if (state == BattleState.PLAYERTURN)
-        {
-            if (isSlidingForward)
-            {
-                playerController.SlideTo(enemySpawnPosition[selectedEnemy]);
-            }
-            else if (isSlidingBack)
-            {
-                playerController.SlideBack(playerSpawnPosition);
-            }
-        }
-        else if (state == BattleState.ENEMYTURN)
-        {
-            if (isSlidingBack)
-            {
-                enemyStats[activeEnemy].SlideBack(enemySpawnPosition[activeEnemy]);
-            }
-            else  // so far every enemy attack is slide to player = no need for isSlidingForward check
-            {
-                enemyStats[activeEnemy].SlideTo(playerSpawnPosition);
-            }
         }
     }
 }

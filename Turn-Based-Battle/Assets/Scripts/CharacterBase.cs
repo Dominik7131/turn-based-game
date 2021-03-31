@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.Collections;
 using UnityEngine;
 
 public class CharacterBase : MonoBehaviour
@@ -181,17 +181,12 @@ public class CharacterBase : MonoBehaviour
         Destroy(gameObject, 0.25f);
     }
 
-
-    public void SlideTo(Vector3 target)
+    public IEnumerator MoveTo(Vector3 target, float offset)
     {
-        if (Math.Abs(transform.position.x - target.x) > 1.5)
+        while (Vector2.Distance(transform.position, target) > offset)
         {
-            transform.position += (target - transform.position) * slideSpeed * Time.deltaTime;
+            transform.position = Vector2.Lerp(transform.position, target, slideSpeed * Time.deltaTime);
+            yield return null;
         }
-    }
-
-    public void SlideBack(Vector3 target)
-    {
-        transform.position += (target - transform.position) * slideSpeed * Time.deltaTime;
     }
 }

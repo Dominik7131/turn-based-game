@@ -78,7 +78,7 @@ public class PlayerStatsController : MonoBehaviour
     {
         // Init player's stats
         vitality = strength = criticals = looting = level = maxLevelReached = 1;
-        slideSpeed = 5;
+        slideSpeed = 7;
 
         ps.skillTreeLevels = new int[skillCount];
         ps.isSkillUnlocked = new bool[skillCount];
