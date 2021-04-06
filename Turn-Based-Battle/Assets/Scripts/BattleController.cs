@@ -227,9 +227,8 @@ public class BattleController : MonoBehaviour
             }
         }
 
-
         // Second turn chance - can happen only once per player's turn
-        if (Random.Range(1, 100) < PSC.ps.secondTurnChance && !isSecondTurn)
+        if (Random.Range(1, 101) <= PSC.ps.secondTurnChance && !isSecondTurn)
         {
             isSecondTurn = true; // disable second turn chance next round
             skillHUDController.DecreseCooldowns();
@@ -343,7 +342,7 @@ public class BattleController : MonoBehaviour
             // Thorns skill
             if (PSC.ps.isSkillUnlocked[(int)Skill.Thorns])
             {
-                if (Random.Range(1, 100) < PSC.ps.thornsChance)
+                if (Random.Range(1, 101) <= PSC.ps.thornsChance)
                 {
                     enemyStats[i].DamageByThorns(PSC.ps.thornsEffect);
                 }

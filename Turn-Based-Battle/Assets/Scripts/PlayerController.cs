@@ -22,7 +22,7 @@ public class PlayerController : CharacterBase
         Color attackColor = Color.white;
 
         int criticalChance = 10 + ((criticalHit - 1) * 2);
-        if (Random.Range(1, 100) <= criticalChance)
+        if (Random.Range(1, 101) <= criticalChance)
         {
             // Critical hit
             float criticalMultiplier = 2 + (criticalHit / 10f);
@@ -57,7 +57,7 @@ public class PlayerController : CharacterBase
                 playerDamage += Mathf.RoundToInt(playerDamage * (PlayerStatsController.ps.basicEffect / 100f));
 
                 // Chance for poison attack
-                if (PlayerStatsController.ps.isSkillUnlocked[(int)Skill.PoisonChance] && Random.Range(1, 100) <= PlayerStatsController.ps.poisonChance)
+                if (PlayerStatsController.ps.isSkillUnlocked[(int)Skill.PoisonChance] && Random.Range(1, 101) <= PlayerStatsController.ps.poisonChance)
                 {
                     enemyStats[selectedEnemy].ApplyPoison(PlayerStatsController.ps.poisonLength);
                 }
