@@ -1,3 +1,6 @@
+# Turned based game inspired by Swords & Souls
+![TurnBasedGame](Turn-Based-Battle/Assets/Sprites/Gameplay.png)
+
 # Full gameplay
 - https://youtu.be/MFdxFu4sVeA
 
