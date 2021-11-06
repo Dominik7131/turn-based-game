@@ -1,4 +1,4 @@
-# Turned based game inspired by Swords & Souls
+# Turn based game inspired by Swords & Souls
 ![TurnBasedGame](Turn-Based-Battle/Assets/Sprites/Gameplay.png)
 
 # Full gameplay
